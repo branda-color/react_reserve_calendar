@@ -11,8 +11,6 @@ const localizer = momentLocalizer(moment);
 
 const AdjustTime = () => {
 
-
-
     const calendarStyle = () => {
         return {
             style: {

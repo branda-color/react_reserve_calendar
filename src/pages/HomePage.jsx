@@ -7,7 +7,7 @@ import TimezoneSelect from "../components/TimezoneSelect";
 //事件假設(未接api)
 import events from "../components/events";
 
-
+//查看當前瀏覽器的時區>>會拿到Asia/Taipei 
 const defaultTZ = moment.tz.guess();
 const defaultDateStr = '2015-4-13';
 

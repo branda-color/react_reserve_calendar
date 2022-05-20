@@ -1,7 +1,7 @@
 /**
  * 測試用calendar
  */
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment-timezone';
@@ -11,9 +11,15 @@ import TimezoneSelect from "../components/TimezoneSelect";
 import events from "../components/events";
 import backgroundEvents from "../components/backgroundEvents";
 
+import Pop from "../events/popup";
+import MyTimePicker from "../events/MyTimePicker";
 
+
+
+
+//查看當前瀏覽器的時區>>會拿到Asia/Taipei 
 const defaultTZ = moment.tz.guess();
-const defaultDateStr = '2015-4-13';
+
 
 function getDate(str, momentObj) {
     return momentObj(str, 'YYYY-MM-DD').toDate()
@@ -21,18 +27,46 @@ function getDate(str, momentObj) {
 
 const About = () => {
 
+    const [ButtonPop, setButtonPop] = useState(false);
+    const [myEvents, setEvents] = useState(events);
+    //存起拿資料
+    const [newEvent, setNewEvents] = useState();
+    const [selected, setSelected] = useState();
+
+
+
+    //calendar
+    function handleSelect({ start, end }) {
+        const title = window.prompt('New Event name');
+
+        if (title) {
+            var newEvent = {
+                start: start,
+                end: end,
+                title: title
+            }
+            setNewEvents(newEvent);
+            setEvents((prev) => [...prev, newEvent]);
+        }
+    };
+
+    const handleSelected = (event) => {
+        setSelected(event);
+        // console.info('[handleSelected - event]', event);
+      };
+
 
     const [timezone, setTimezone] = useState(defaultTZ)
 
-    const { defaultDate, getNow, localizer, myEvents, scrollToTime } =
+    const { getNow, localizer } =
 
         /**
          * 避免重複進行複雜耗時的計算」，所以把計算的結果存起來用。
+         * 選擇timeZone
          */
         useMemo(() => {
             moment.tz.setDefault(timezone)
             return {
-                defaultDate: getDate(defaultDateStr, moment),
                 getNow: () => moment().toDate(),
                 localizer: momentLocalizer(moment),
                 myEvents: [...events],
@@ -54,10 +88,11 @@ const About = () => {
         return {
             style: {
                 backgroundColor: '#FCFCFC'
-                
+
             }
         }
     }
+
 
     return (
 
@@ -72,7 +107,7 @@ const About = () => {
                     //選取的特定day
                     defaultView="day"
                     localizer={localizer}
-                    events={events}
+                    events={myEvents}
                     startAccessor="start"
                     endAccessor="end"
                     backgroundEvents={backgroundEvents}
@@ -84,14 +119,21 @@ const About = () => {
                     //min可以設定開始時間
                     //min={new Date(2022, 10, 0, 2, 0, 0)}
                     //設定載入以第一個物件的時間為主{Date}
-                    scrollToTime={events[0].start}
+                    // scrollToTime={}
+                    selected={selected}
+                    onSelectEvent={handleSelected}
+                    onSelectSlot={handleSelect}
+                    selectable
                 />
+                <Pop test={newEvent} />
+                <MyTimePicker newEvent = {newEvent} selected={selected} />
             </div>
         </div>
     );
 
 
 };
+
 
 
 

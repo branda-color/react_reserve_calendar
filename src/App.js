@@ -8,6 +8,7 @@ import {
 import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import AdjustTime from "./pages/AdjustTime";
+import Test from "./pages/Test";
 
 
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="about/*" element={<About />} />
         <Route path="adjusttime" element={<AdjustTime/>} />
+        <Route path="test" element={<Test/>} />
       </Routes>
     </BrowserRouter>
   );
