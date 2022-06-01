@@ -1,20 +1,21 @@
 /**
  * 測試用calendar
  */
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo,useReducer, createContext} from "react";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment-timezone';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import TimezoneSelect from "../components/TimezoneSelect";
-//事件假設(未接api)
-import events from "../components/events";
 import backgroundEvents from "../components/backgroundEvents";
 
 import Pop from "../events/popup";
 import MyTimePicker from "../events/MyTimePicker";
 
 
+import { initialEvent, reducer} from "../contexts/event";
+
+export const AboutContext = createContext(null);
 
 
 //查看當前瀏覽器的時區>>會拿到Asia/Taipei 
@@ -27,33 +28,34 @@ function getDate(str, momentObj) {
 
 const About = () => {
 
-    const [ButtonPop, setButtonPop] = useState(false);
-    const [myEvents, setEvents] = useState(events);
+
+
+   //全域資料拿取
+   const [state, dispatch] = useReducer(reducer,initialEvent); 
+   const {event} = state; 
+
+
+    // const [myEvents, setEvents] = useState(events);
     //存起拿資料
-    const [newEvent, setNewEvents] = useState();
     const [selected, setSelected] = useState();
 
 
 
-    //calendar
-    function handleSelect({ start, end }) {
-        const title = window.prompt('New Event name');
 
-        if (title) {
-            var newEvent = {
-                start: start,
-                end: end,
-                title: title
-            }
-            setNewEvents(newEvent);
-            setEvents((prev) => [...prev, newEvent]);
-        }
+    //新增日曆物件
+    function handleSelect({ start, end}) {
+
+
+        dispatch({ type: "new", payload:{start:start,end:end }});
+
+            
+    
     };
 
     const handleSelected = (event) => {
-        setSelected(event);
-        // console.info('[handleSelected - event]', event);
-      };
+
+        dispatch({ type: "select", payload:{id:event.id}});
+    };
 
 
     const [timezone, setTimezone] = useState(defaultTZ)
@@ -69,7 +71,6 @@ const About = () => {
             return {
                 getNow: () => moment().toDate(),
                 localizer: momentLocalizer(moment),
-                myEvents: [...events],
                 scrollToTime: moment().toDate(),
             }
         }, [timezone])
@@ -95,7 +96,7 @@ const About = () => {
 
 
     return (
-
+        <AboutContext.Provider value={{state, dispatch}}>
         <div>
             <TimezoneSelect
                 defaultTZ={defaultTZ}
@@ -107,7 +108,7 @@ const About = () => {
                     //選取的特定day
                     defaultView="day"
                     localizer={localizer}
-                    events={myEvents}
+                    events={event}
                     startAccessor="start"
                     endAccessor="end"
                     backgroundEvents={backgroundEvents}
@@ -120,15 +121,42 @@ const About = () => {
                     //min={new Date(2022, 10, 0, 2, 0, 0)}
                     //設定載入以第一個物件的時間為主{Date}
                     // scrollToTime={}
-                    selected={selected}
+                    // selected={selected}
                     onSelectEvent={handleSelected}
                     onSelectSlot={handleSelect}
                     selectable
-                />
-                <Pop test={newEvent} />
-                <MyTimePicker newEvent = {newEvent} selected={selected} />
+                    dayLayoutAlgorithm="no-overlap"
+                    //更改時間選取30->60
+                    step={60}
+                    timeslots={1}
+                    eventPropGetter={
+                        (event, start, end, isSelected) => {
+                          let newStyle = {
+                            backgroundColor: "#00C7BA",
+                            color: 'black',
+                            borderRadius: "0px",
+                            border: "none"
+                          };
+                          //設置background屬性,若是background就1(區別backgroundEvents換顏色)
+                          if (event.background){
+                            newStyle.backgroundColor = "#FFBB00"
+                          }
+                    
+                          return {
+                            className: "",
+                            style: newStyle
+                          };
+                        }
+                      }
+
+                >
+                </Calendar>
+                <Pop />
+                <MyTimePicker />
+
             </div>
         </div>
+        </AboutContext.Provider>
     );
 
 

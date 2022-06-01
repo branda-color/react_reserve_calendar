@@ -2,8 +2,6 @@ const now = new Date()
 
 export default [
     
-
-   
       {
         id: 2,
         title: 'Today',

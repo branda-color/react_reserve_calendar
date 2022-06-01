@@ -1,64 +1,78 @@
-import React, { useState } from "react";
-import { TimePicker } from 'antd';
+import React, { useContext, useEffect, useState } from "react";
+import { TimePicker, Input } from 'antd';
 import moment from "moment";
+
+
+import { AboutContext } from "../pages/About";
 
 const format = "HH:mm";
 
-const MyTimePicker = (props) => {
 
-  const selectEvent = props.selected;
+const MyTimePicker = () => {
 
-  const newEvent = props.newEvent;
+  const { state, dispatch } = useContext(AboutContext);
 
-  let startTime = null;
+  const { event, selectedId } = state;
 
-  let endTime = null;
+  const [select, setSelect] = useState(null);
+  const [startTime, setstartTime] = useState(null);
+  const [endTime, setendTime] = useState(null);
 
-  if (selectEvent) {
+  useEffect(() => {
+    console.log(selectedId, event);
+    if (selectedId && event) {
+      let selectedEvent = event.filter(selected => selected.id === selectedId)[0];
+      setSelect(selectedEvent);
+      setstartTime(moment(selectedEvent.start));
+      setendTime(moment(selectedEvent.end));
+    }
+  }, [selectedId, event])
 
-    let a = JSON.stringify(selectEvent);
-    let b = JSON.parse(a);
-    startTime = moment(b.start);
-    endTime = moment(b.end);
-
-   }else if(newEvent){
-    let a = JSON.stringify(newEvent);
-    let b = JSON.parse(a);
-    startTime = moment(b.start);
-    endTime = moment(b.end);
-
-  }
-
-  const [timeString, setTimeString] = useState('');
-
-  const handelSetTimeString = (e) => {
-    const { value } = e.target;
-    setTimeString(value);
-  };
 
 
   return (
     <div>
-    <TimePicker
-      value={startTime}
-      minuteStep={30}
-      format={format}
-      onOk={(time) => {
-        setTimeString(timeString);
-        console.log(time);
-        console.log(timeString);
-      }}
-    />- 
-    <TimePicker
-      value={endTime}
-      minuteStep={30}
-      format={format}
-      onOk={(time) => {
-        setTimeString(timeString);
-        console.log(time);
-        console.log(timeString);
-      }}
-    />
+      <TimePicker
+
+        value={startTime ? startTime : (select ? moment(select.start) : null)}
+        minuteStep={30}
+        format={format}
+        onOk={(start) => {
+          if (endTime && endTime.isBefore(start)) {
+ 
+            setendTime(start);
+            setstartTime(endTime);
+
+          } else {
+          
+            setstartTime(start);
+
+          }
+        }
+        }
+      />-
+      <TimePicker
+        value={endTime ? endTime : (select ? moment(select.start) : null)}
+        minuteStep={30}
+        format={format}
+        onOk={(end) => {
+
+          if (startTime && end.isBefore(startTime)) {
+
+
+            setendTime(startTime);
+            setstartTime(end);
+
+          } else {
+            setendTime(endTime);
+
+          }
+
+
+
+        }}
+      />
+      <Input placeholder="enter student name" value={select ? select.title : null} />
     </div>
   );
 }

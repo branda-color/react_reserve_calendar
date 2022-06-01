@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo,useContext } from "react";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment-timezone';
@@ -6,6 +6,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import TimezoneSelect from "../components/TimezoneSelect";
 //事件假設(未接api)
 import events from "../components/events";
+import { AboutContext } from "./About";
 
 //查看當前瀏覽器的時區>>會拿到Asia/Taipei 
 const defaultTZ = moment.tz.guess();
@@ -19,6 +20,7 @@ function getDate(str, momentObj) {
 const HomePage = ()=>{
 
     const [timezone, setTimezone] = useState(defaultTZ)
+    const {state, dispatch} = useContext(AboutContext);
 
     const { defaultDate, getNow, localizer, myEvents, scrollToTime } =
 

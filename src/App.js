@@ -20,6 +20,7 @@ function App() {
         <Route path="about/*" element={<About />} />
         <Route path="adjusttime" element={<AdjustTime/>} />
         <Route path="test" element={<Test/>} />
+ 
       </Routes>
     </BrowserRouter>
   );

@@ -14,9 +14,6 @@ const Pop = (props)=>{
     // console.log(moment(b.start).format("HH:mm"));
 
 
-
-    
-
     }
     
 
