@@ -4,13 +4,13 @@ export const initialEvent = {
     selectedId: 0,
     event: [
         {
-            id: 2,
+            id: 1,
             title: 'Today',
             start: new Date(new Date().setHours(new Date().getHours() - 3)),
             end: new Date(new Date().setHours(new Date().getHours() + 3)),
         },
         {
-            id: 3,
+            id: 2,
             title: 'Point in Time Event',
             start: new Date(new Date().setHours(new Date().getHours() - 1)),
             end: new Date(new Date().setHours(new Date().getHours() + 1)),
@@ -25,8 +25,6 @@ export const initialEvent = {
 
 export function reducer(state, action) {
 
-    console.log(state);
-
     switch (action.type) {
         case "new":
             return {
@@ -34,28 +32,22 @@ export function reducer(state, action) {
                 event: [
                     ...state.event,
                     {
-                        id: state.event.length + 1,
+                        id: -1,
                         start: action.payload.start,
                         end: action.payload.end,
                         title: action.payload.title
                     }
+                    
                 ]
+                ,selectedId:-1
             };
         case "change":
-            return state.map((event) => {
-                if (event.id === action.id) {
-                    return {
-                        event: {
-                            ...state.event,
-                            start: action.payload.start,
-                            end: action.payload.end,
-                            title: action.payload.title
-                        }
-                    };
-                } else {
-                    return event;
-                }
-            });
+
+            return {
+                ...state,
+                event:action.payload.event
+            }
+
         case "delete":
             return state.filter(function (item) {
                 return item.id !== action.id

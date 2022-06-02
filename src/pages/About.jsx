@@ -43,7 +43,7 @@ const About = () => {
 
 
     //新增日曆物件
-    function handleSelect({ start, end}) {
+    function handleSelect({ start, end,action}) {
 
 
         dispatch({ type: "new", payload:{start:start,end:end }});
