@@ -11,7 +11,7 @@ const MyTimePicker = () => {
 
   const { state, dispatch } = useContext(EventContext);
 
-  const { event, selectedId } = state;
+  const { timeEvents, selectedId } = state;
 
   const [select, setSelect] = useState(null);
   const [startTime, setstartTime] = useState(null);
@@ -19,15 +19,15 @@ const MyTimePicker = () => {
   const [title, setTitle] = useState(null);
 
   useEffect(() => {
-    console.log(selectedId, event);
-    if (selectedId && event) {
-      let selectedEvent = event.filter(selected => selected.id === selectedId)[0];
+    console.log(selectedId, timeEvents);
+    if (selectedId && timeEvents) {
+      let selectedEvent = timeEvents.filter(selected => selected.id === selectedId)[0];
       setSelect(selectedEvent);
       setstartTime(moment(selectedEvent.start));
       setendTime(moment(selectedEvent.end));
       setTitle(selectedEvent.title);
     }
-  }, [selectedId, event]);
+  }, [selectedId, timeEvents]);
 
 
   return (
@@ -63,7 +63,7 @@ const MyTimePicker = () => {
       />
       <Input placeholder="enter student name" value={title ?title:(select ? select.title : null)} onChange={(titles) => { setTitle(titles.target.value) }} />
       <Button type="primary" onClick={() => {  
-        let newEvent = event.filter(selected => selected.id !== selectedId);
+        let newEvent = timeEvents.filter(selected => selected.id !== selectedId);
         newEvent.push({
           id: selectedId,
           title: title,
@@ -72,7 +72,7 @@ const MyTimePicker = () => {
         });
 
         console.log(newEvent);
-        dispatch({ type: "change", payload: {event:newEvent}});
+        dispatch({ type: "change", payload: {timeEvents:newEvent}});
 
       }}>修改</Button>
       <Button>取消</Button>

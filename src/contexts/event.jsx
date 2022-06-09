@@ -3,7 +3,7 @@ import React,{ useReducer, createContext } from "react";
 
 export const initialEvent = {
     selectedId: 0,
-    event: [
+    timeEvents: [
         {
             id: 1,
             title: 'Today',
@@ -28,8 +28,8 @@ export function reducer(state, action) {
         case "new":
             return {
                 ...state,
-                event: [
-                    ...state.event,
+                timeEvents: [
+                    ...state.timeEvents,
                     {
                         id: -1,
                         start: action.payload.start,
@@ -44,7 +44,7 @@ export function reducer(state, action) {
 
             return {
                 ...state,
-                event:action.payload.event
+                timeEvents:action.payload.timeEvents
             }
 
         case "delete":

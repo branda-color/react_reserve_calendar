@@ -37,7 +37,7 @@ const About = () => {
     //全域資料拿取
     const { state, dispatch } = useContext(EventContext);
 
-    const { event, selectedId } = state;
+    const { timeEvents, selectedId } = state;
 
     //新增日曆物件
     function handleSelect({ start, end }) {
@@ -92,11 +92,25 @@ const About = () => {
 
 
     const moveEvent = useCallback(
-        // ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
+        ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
+
+            let newEvent = timeEvents.filter(selected => selected.id !== event.id);
+            newEvent.push({
+              id: event.id,
+              title: event.title,
+              start: start,
+              end: end,
+            });
+    
+            console.log(newEvent);
+            dispatch({ type: "change", payload: {timeEvents:newEvent}});
+
+
         //   const { allDay } = event
         //   if (!allDay && droppedOnAllDaySlot) {
         //     event.allDay = true
         //   }
+          }
 
         //   setMyEvents((prev) => {
         //     const existing = prev.find((ev) => ev.id === event.id) ?? {}
@@ -138,7 +152,7 @@ const About = () => {
                     //選取的特定day
                     defaultView="day"
                     localizer={localizer}
-                    events={event}
+                    events={timeEvents}
                     startAccessor="start"
                     endAccessor="end"
                     backgroundEvents={backgroundEvents}
@@ -150,7 +164,7 @@ const About = () => {
                     //min可以設定開始時間
                     //min={new Date(2022, 10, 0, 2, 0, 0)}
                     //設定載入以第一個物件的時間為主{Date}
-                    scrollToTime={event[0].start}
+                    scrollToTime={timeEvents[0].start}
                     // selected={selected}
                     //選取新增
                     onSelectEvent={handleSelected}
