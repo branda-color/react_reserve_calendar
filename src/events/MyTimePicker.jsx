@@ -2,9 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { TimePicker, Input, Button } from 'antd';
 import moment from "moment";
 
-
-// import { AboutContext } from "../pages/About";
-
 import { EventContext } from "../contexts/event";
 
 const format = "HH:mm";

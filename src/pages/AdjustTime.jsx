@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import events from "../components/events";
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { Calendar, momentLocalizer,Views } from 'react-big-calendar';
 // Storybook cannot alias this, so you would use 'react-big-calendar/lib/addons/dragAndDrop'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop/withDragAndDrop';
 // Storybook cannot alias this, so you would use 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss';
 import moment from 'moment';
 import 'moment-timezone';
+
 
 moment.tz.setDefault('Asia/Taipei');
 
@@ -18,7 +19,6 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 const AdjustTime = () => {
 
   const [myEvents, setMyEvents] = useState(events)
-
 
   const moveEvent = useCallback(
     ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
@@ -47,7 +47,10 @@ const AdjustTime = () => {
     [setMyEvents]
   )
 
-  const defaultDate = useMemo(() => new Date(2015, 3, 12), [])
+  const defaultDate = useMemo(() => new Date(2022, 5, 9), [])
+
+  console.log(defaultDate);
+
 
   return (
 
@@ -56,7 +59,7 @@ const AdjustTime = () => {
       <div>
         <DragAndDropCalendar
           defaultDate={defaultDate}
-          defaultView="week"
+          defaultView={Views.MONTH}
           events={myEvents}
           localizer={localizer}
           onEventDrop={moveEvent}
