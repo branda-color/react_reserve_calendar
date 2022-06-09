@@ -1,3 +1,4 @@
+import React,{ useReducer, createContext } from "react";
 
 
 export const initialEvent = {
@@ -18,8 +19,6 @@ export const initialEvent = {
         }
     ]
 };
-
-
 
 
 
@@ -69,4 +68,19 @@ export function reducer(state, action) {
 
 }
 
+
+export const EventContext = createContext();
+
+
+export const EventContextProvider = ({ children })=>{
+
+    const [state, dispatch] = useReducer(reducer, initialEvent);
+
+    return (
+        <EventContext.Provider value={{ state, dispatch }}>
+          {children}
+        </EventContext.Provider>
+      );
+
+}
 

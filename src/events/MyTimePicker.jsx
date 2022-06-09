@@ -3,14 +3,16 @@ import { TimePicker, Input, Button } from 'antd';
 import moment from "moment";
 
 
-import { AboutContext } from "../pages/About";
+// import { AboutContext } from "../pages/About";
+
+import { EventContext } from "../contexts/event";
 
 const format = "HH:mm";
 
 
 const MyTimePicker = () => {
 
-  const { state, dispatch } = useContext(AboutContext);
+  const { state, dispatch } = useContext(EventContext);
 
   const { event, selectedId } = state;
 

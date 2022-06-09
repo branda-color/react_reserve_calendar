@@ -10,11 +10,14 @@ import About from "./pages/About";
 import AdjustTime from "./pages/AdjustTime";
 import Test from "./pages/Test";
 
+import {EventContextProvider} from "./contexts/event";
+
 
 
 function App() {
   return (
     <BrowserRouter>
+    <EventContextProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="about/*" element={<About />} />
@@ -22,6 +25,7 @@ function App() {
         <Route path="test" element={<Test/>} />
  
       </Routes>
+      </EventContextProvider>
     </BrowserRouter>
   );
 }

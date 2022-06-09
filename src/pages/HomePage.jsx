@@ -4,9 +4,8 @@ import moment from 'moment';
 import 'moment-timezone';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import TimezoneSelect from "../components/TimezoneSelect";
-//事件假設(未接api)
-import events from "../components/events";
-import { AboutContext } from "./About";
+
+import { EventContext } from "../contexts/event";
 
 //查看當前瀏覽器的時區>>會拿到Asia/Taipei 
 const defaultTZ = moment.tz.guess();
@@ -20,9 +19,13 @@ function getDate(str, momentObj) {
 const HomePage = ()=>{
 
     const [timezone, setTimezone] = useState(defaultTZ)
-    const {state, dispatch} = useContext(AboutContext);
+    
+    const { state, dispatch } = useContext(EventContext);
 
-    const { defaultDate, getNow, localizer, myEvents, scrollToTime } =
+    const { event, selectedId } = state;
+
+
+    const { localizer} =
 
         /**
          * 避免重複進行複雜耗時的計算」，所以把計算的結果存起來用。
@@ -33,7 +36,6 @@ const HomePage = ()=>{
                 defaultDate: getDate(defaultDateStr, moment),
                 getNow: () => moment().toDate(),
                 localizer: momentLocalizer(moment),
-                myEvents: [...events],
                 scrollToTime: moment().toDate(),
             }
         }, [timezone])
@@ -59,6 +61,7 @@ const HomePage = ()=>{
 
     return (
 
+   
         <div>
             <TimezoneSelect
                 defaultTZ={defaultTZ}
@@ -70,7 +73,7 @@ const HomePage = ()=>{
                     //選取的特定day
                     defaultView="day"
                     localizer={localizer}
-                    events={events}
+                    events={event}
                     startAccessor="start"
                     endAccessor="end"
                     //設置可切換有哪些view
@@ -79,10 +82,11 @@ const HomePage = ()=>{
                     //自訂義月曆背景顏色
                     dayPropGetter={calendarStyle}
                     //設定載入以第一個物件的時間為主
-                    scrollToTime={events[0].start}
+                    scrollToTime={event[0].start}
                 />
             </div>
         </div>
+
     );
 
 };

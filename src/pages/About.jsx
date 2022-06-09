@@ -1,7 +1,7 @@
 /**
  * 測試用calendar
  */
-import React, { useState, useEffect, useMemo,useReducer, createContext} from "react";
+import React, { useState, useEffect, useMemo, useReducer, useContext } from "react";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment-timezone';
@@ -13,9 +13,9 @@ import Pop from "../events/popup";
 import MyTimePicker from "../events/MyTimePicker";
 
 
-import { initialEvent, reducer} from "../contexts/event";
+import { EventContext } from "../contexts/event";
 
-export const AboutContext = createContext(null);
+
 
 
 //查看當前瀏覽器的時區>>會拿到Asia/Taipei 
@@ -29,32 +29,27 @@ function getDate(str, momentObj) {
 const About = () => {
 
 
+    const { state, dispatch } = useContext(EventContext);
+    //全域資料拿取
+    // const [state, dispatch] = useReducer(reducer, initialEvent);
 
-   //全域資料拿取
-   const [state, dispatch] = useReducer(reducer,initialEvent); 
-   const {event} = state; 
-
-
-    // const [myEvents, setEvents] = useState(events);
-    //存起拿資料
-    const [selected, setSelected] = useState();
-
-
+    const { event,selectedId} = state;
+    // const { event } = state;
 
 
     //新增日曆物件
-    function handleSelect({ start, end,action}) {
+    function handleSelect({ start, end }) {
 
 
-        dispatch({ type: "new", payload:{start:start,end:end }});
+        dispatch({ type: "new", payload: { start: start, end: end } });
 
-            
-    
+
+
     };
 
     const handleSelected = (event) => {
 
-        dispatch({ type: "select", payload:{id:event.id}});
+        dispatch({ type: "select", payload: { id: event.id } });
     };
 
 
@@ -96,67 +91,75 @@ const About = () => {
 
 
     return (
-        <AboutContext.Provider value={{state, dispatch}}>
-        <div>
-            <TimezoneSelect
-                defaultTZ={defaultTZ}
-                setTimezone={setTimezone}
-                timezone={timezone}
-            />
-            <div style={{ height: '100%', margin: '20px' }}>
-                <Calendar
-                    //選取的特定day
-                    defaultView="day"
-                    localizer={localizer}
-                    events={event}
-                    startAccessor="start"
-                    endAccessor="end"
-                    backgroundEvents={backgroundEvents}
-                    //設置可切換有哪些view
-                    // views={['day']}
-                    style={{ height: 500 }}
-                    //自訂義月曆背景顏色
-                    dayPropGetter={calendarStyle}
-                    //min可以設定開始時間
-                    //min={new Date(2022, 10, 0, 2, 0, 0)}
-                    //設定載入以第一個物件的時間為主{Date}
-                    // scrollToTime={}
-                    // selected={selected}
-                    onSelectEvent={handleSelected}
-                    onSelectSlot={handleSelect}
-                    selectable
-                    dayLayoutAlgorithm="no-overlap"
-                    //更改時間選取30->60
-                    step={60}
-                    timeslots={1}
-                    eventPropGetter={
-                        (event, start, end, isSelected) => {
-                          let newStyle = {
-                            backgroundColor: "#00C7BA",
-                            color: 'black',
-                            borderRadius: "0px",
-                            border: "none"
-                          };
-                          //設置background屬性,若是background就1(區別backgroundEvents換顏色)
-                          if (event.background){
-                            newStyle.backgroundColor = "#FFBB00"
-                          }
-                    
-                          return {
-                            className: "",
-                            style: newStyle
-                          };
+        
+            <div>
+                <TimezoneSelect
+                    defaultTZ={defaultTZ}
+                    setTimezone={setTimezone}
+                    timezone={timezone}
+                />
+                <div style={{ height: '100%', margin: '20px' }}>
+                    <Calendar
+                        //選取的特定day
+                        defaultView="day"
+                        localizer={localizer}
+                        events={event}
+                        startAccessor="start"
+                        endAccessor="end"
+                        backgroundEvents={backgroundEvents}
+                        //設置可切換有哪些view
+                        // views={['day']}
+                        style={{ height: 500 }}
+                        //自訂義月曆背景顏色
+                        dayPropGetter={calendarStyle}
+                        //min可以設定開始時間
+                        //min={new Date(2022, 10, 0, 2, 0, 0)}
+                        //設定載入以第一個物件的時間為主{Date}
+                        scrollToTime={event[0].start}
+                        // selected={selected}
+                        onSelectEvent={handleSelected}
+                        onSelectSlot={handleSelect}
+                        selectable
+                        dayLayoutAlgorithm="no-overlap"
+                        //更改時間選取30->60
+                        step={60}
+                        timeslots={1}
+                        eventPropGetter={
+                            (event, start, end, isSelected) => {
+                                let newStyle = {
+                                    backgroundColor: "#00C7BA",
+                                    color: 'black',
+                                    borderRadius: "0px",
+                                    border: "none",
+                                };
+                                //設置background屬性,若是background就1(區別backgroundEvents換顏色)
+                                if (event.background) {
+                                    newStyle.backgroundColor = "#FFBB00"
+                                }
+                                //設置被選到的換顏色
+                                if (isSelected) {
+                                    if (event.background) {
+                                        newStyle.backgroundColor = "#FFBB00"
+                                    } else {
+                                        newStyle.backgroundColor = "RED"
+                                    }
+                                }
+
+                                return {
+                                    className: "",
+                                    style: newStyle
+                                };
+                            }
                         }
-                      }
 
-                >
-                </Calendar>
-                <Pop />
-                <MyTimePicker />
+                    >
+                    </Calendar>
+                    <Pop />
+                    <MyTimePicker />
 
+                </div>
             </div>
-        </div>
-        </AboutContext.Provider>
+   
     );
 
 
