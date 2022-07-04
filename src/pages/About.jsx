@@ -14,6 +14,8 @@ import MyTimePicker from "../events/MyTimePicker";
 //加入全域物件
 import { EventContext } from "../contexts/event";
 
+//加入helper function
+import { noOverlap } from "../function/helper";
 
 //拖拉樣式加入
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop/withDragAndDrop';
@@ -39,13 +41,26 @@ const About = () => {
 
     const { timeEvents, selectedId } = state;
 
+
     //新增日曆物件
     function handleSelect({ start, end }) {
 
-        dispatch({ type: "new", payload: { start: start, end: end } });
+        if (selectedId !== -1) {
+
+            let overlap = noOverlap(start, end, timeEvents);
+
+            if (overlap !== true) {
+
+                dispatch({ type: "new", payload: { start: start, end: end } });
+
+            }
+
+        }
+
 
     };
 
+    //選擇日曆物件
     const handleSelected = (event) => {
 
         dispatch({ type: "select", payload: { id: event.id } });
@@ -89,57 +104,53 @@ const About = () => {
     }
 
 
-
-
-    const moveEvent = useCallback(
-        ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
+    const moveEvent =
+        ({ event, start, end, isAllDay: droppedOnAllDaySlot = true }) => {
 
             let newEvent = timeEvents.filter(selected => selected.id !== event.id);
             newEvent.push({
-              id: event.id,
-              title: event.title,
-              start: start,
-              end: end,
+                id: event.id,
+                title: event.title,
+                start: start,
+                end: end,
             });
-    
-            console.log(newEvent);
-            dispatch({ type: "change", payload: {timeEvents:newEvent}});
+
+            let overlap = noOverlap(start, end, newEvent);
+
+            if (overlap !== true) {
+
+                dispatch({ type: "change", payload: { timeEvents: newEvent } });
+
+            }
 
 
-        //   const { allDay } = event
-        //   if (!allDay && droppedOnAllDaySlot) {
-        //     event.allDay = true
-        //   }
-          }
-
-        //   setMyEvents((prev) => {
-        //     const existing = prev.find((ev) => ev.id === event.id) ?? {}
-        //     const filtered = prev.filter((ev) => ev.id !== event.id)
-        //     return [...filtered, { ...existing, start, end, allDay }]
-        //   })
-        // },
-        // [setMyEvents]
-    );
+        }
 
 
-    const resizeEvent = useCallback(
-        // ({ event, start, end }) => {
-        //   setMyEvents((prev) => {
-        //     const existing = prev.find((ev) => ev.id === event.id) ?? {}
-        //     const filtered = prev.filter((ev) => ev.id !== event.id)
-        //     return [...filtered, { ...existing, start, end }]
-        //   })
-        // },
-        // [setMyEvents]
-    )
+    const resizeEvent =
+        ({ event, start, end }) => {
+
+            let newEvent = timeEvents.filter(selected => selected.id !== event.id);
+            newEvent.push({
+                id: event.id,
+                title: event.title,
+                start: start,
+                end: end,
+            });
 
 
+            let overlap = noOverlap(start, end, newEvent);
 
+            if (overlap !== true) {
 
+                dispatch({ type: "change", payload: { timeEvents: newEvent } });
 
+            }
 
+        };
 
     return (
+
 
         <div>
             <TimezoneSelect
@@ -153,6 +164,7 @@ const About = () => {
                     defaultView="day"
                     localizer={localizer}
                     events={timeEvents}
+                    draggableAccessor={(event) => !event.background}
                     startAccessor="start"
                     endAccessor="end"
                     backgroundEvents={backgroundEvents}
@@ -208,7 +220,6 @@ const About = () => {
                             };
                         }
                     }
-
 
                 >
                 </DragAndDropCalendar>

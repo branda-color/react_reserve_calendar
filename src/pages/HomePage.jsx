@@ -22,7 +22,7 @@ const HomePage = ()=>{
     
     const { state, dispatch } = useContext(EventContext);
 
-    const { event, selectedId } = state;
+    const { timeEvents, selectedId } = state;
 
 
     const { localizer} =
@@ -73,16 +73,16 @@ const HomePage = ()=>{
                     //選取的特定day
                     defaultView="day"
                     localizer={localizer}
-                    events={event}
+                    events={timeEvents}
                     startAccessor="start"
                     endAccessor="end"
                     //設置可切換有哪些view
-                    views={['day']}
+                    views={['week', 'day']}
                     style={{ height: 500 }}
                     //自訂義月曆背景顏色
                     dayPropGetter={calendarStyle}
                     //設定載入以第一個物件的時間為主
-                    scrollToTime={event[0].start}
+                    scrollToTime={timeEvents[0].start}
                 />
             </div>
         </div>

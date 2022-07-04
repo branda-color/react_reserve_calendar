@@ -1,8 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { TimePicker, Input, Button } from 'antd';
 import moment from "moment";
+import button from "../components/button";
 
+
+//加入全域物件
 import { EventContext } from "../contexts/event";
+
+//加入helper function
+import { noOverlap } from "../function/helper";
 
 const format = "HH:mm";
 
@@ -19,7 +25,6 @@ const MyTimePicker = () => {
   const [title, setTitle] = useState(null);
 
   useEffect(() => {
-    console.log(selectedId, timeEvents);
     if (selectedId && timeEvents) {
       let selectedEvent = timeEvents.filter(selected => selected.id === selectedId)[0];
       setSelect(selectedEvent);
@@ -28,6 +33,15 @@ const MyTimePicker = () => {
       setTitle(selectedEvent.title);
     }
   }, [selectedId, timeEvents]);
+
+  // 因為useEfeect會被呼喚把select的event值全部回填回去,要設為null必須要在改變select的值
+  useEffect(() => {
+    if (!select) {
+      setstartTime(null);
+      setendTime(null);
+      setTitle(null);
+    }
+  }, [select]);
 
 
   return (
@@ -61,9 +75,11 @@ const MyTimePicker = () => {
           }
         }}
       />
-      <Input placeholder="enter student name" value={title ?title:(select ? select.title : null)} onChange={(titles) => { setTitle(titles.target.value) }} />
-      <Button type="primary" onClick={() => {  
+      <Input placeholder="enter student name" value={title ? title : (select ? select.title : null)} onChange={(titles) => { setTitle(titles.target.value) }} />
+      <Button type="primary" onClick={() => {
+
         let newEvent = timeEvents.filter(selected => selected.id !== selectedId);
+
         newEvent.push({
           id: selectedId,
           title: title,
@@ -71,15 +87,30 @@ const MyTimePicker = () => {
           end: new Date(endTime),
         });
 
-        console.log(newEvent);
-        dispatch({ type: "change", payload: {timeEvents:newEvent}});
+        let overlap = noOverlap(new Date(startTime), new Date(endTime), newEvent);
 
-      }}>修改</Button>
-      <Button>取消</Button>
+        if (overlap !== true) {
+
+          dispatch({ type: "change", payload: { timeEvents: newEvent } });
+
+        }
+
+
+      }}>{selectedId !== -1 ? button.button.update : button.button.new}</Button>
+      <Button onClick={() => {
+
+        let delEvent = timeEvents.filter(selected => selected.id !== selectedId);
+
+        dispatch({ type: "delete", payload: { timeEvents: delEvent } });
+        setSelect(null);
+
+
+      }}>{selectedId !== -1 ? button.button.delete : button.button.clear}</Button>
 
     </div>
+
   );
-} 
+}
 
 
 export default MyTimePicker;

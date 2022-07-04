@@ -1,5 +1,7 @@
 import React,{ useReducer, createContext } from "react";
+import moment from "moment";
 
+const date = new moment(); 
 
 export const initialEvent = {
     selectedId: 0,
@@ -7,14 +9,14 @@ export const initialEvent = {
         {
             id: 1,
             title: 'Today',
-            start: new Date(new Date().setHours(new Date().getHours() - 3)),
-            end: new Date(new Date().setHours(new Date().getHours() + 3)),
+            start: new Date(date.subtract(3, 'hours').format('YYYY-MM-DD HH:00:00')),
+            end: new Date(date.add(3, 'hours').format('YYYY-MM-DD HH:00:00')),
         },
         {
             id: 2,
             title: 'Point in Time Event',
-            start: new Date(new Date().setHours(new Date().getHours() - 1)),
-            end: new Date(new Date().setHours(new Date().getHours() + 1)),
+            start:new Date(date.add(2, 'hours').format('YYYY-MM-DD HH:00:00')),
+            end:new Date(date.add(3, 'hours').format('YYYY-MM-DD HH:00:00')),
             desc: 'Pre-meeting meeting, to prepare for the meeting',
         }
     ]
@@ -48,15 +50,20 @@ export function reducer(state, action) {
             }
 
         case "delete":
-            return state.filter(function (item) {
-                return item.id !== action.id
-            });
+            
+           return {
+               ...state,
+               selectedId:0,
+               timeEvents:action.payload.timeEvents,
+
+           }
+
 
         case "select":
 
             return{
                 ...state,
-                selectedId:action.payload.id
+                selectedId:action.payload.id,
             }
 
         default:
