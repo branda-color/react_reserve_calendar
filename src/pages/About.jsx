@@ -2,7 +2,7 @@
  * 測試用calendar
  */
 import React, { useState, useEffect, useMemo, useCallback, useContext } from "react";
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment-timezone';
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -33,6 +33,7 @@ const defaultTZ = moment.tz.guess();
 function getDate(str, momentObj) {
     return momentObj(str, 'YYYY-MM-DD').toDate()
 }
+
 
 const About = () => {
 
@@ -146,8 +147,48 @@ const About = () => {
                 dispatch({ type: "change", payload: { timeEvents: newEvent } });
 
             }
-
         };
+
+
+    /**
+     * 拿到日期與時間區間(第一天及最後一天)&視角
+     */
+    const [date, setDate] = useState(moment())
+    const [view, setView] = useState(Views.WEEK);
+    const [displayedDateRage, setDisplayedDateRage] = useState({});
+
+    const onNavigate = useCallback((newDate) => setDate(newDate), [setDate]);
+    const onView = useCallback((newView) => setView(newView), [setView]);
+
+
+    let setCurrentDate = (date) => {
+
+        setDate(date);
+        computeDisplayedDateRange();
+    }
+    let setCurrentView = (view) => {
+        setView(view);
+        computeDisplayedDateRange();
+    }
+
+    let computeDisplayedDateRange = () => {
+        let start = moment(date).startOf(view);
+        console.log(start);
+        let end = moment(date).endOf(view);
+        if (view == 'month') {
+            start = start.startOf('week');
+            end = end.endOf('week');
+        }
+        setDisplayedDateRage({ start: start.toString(), end: end.toString() });
+    }
+
+    useEffect(() => {
+        if (date) {
+            computeDisplayedDateRange();
+        }
+    }, [date, view]);
+
+
 
     return (
 
@@ -158,18 +199,23 @@ const About = () => {
                 setTimezone={setTimezone}
                 timezone={timezone}
             />
+
             <div style={{ height: '100%', margin: '20px' }}>
                 <DragAndDropCalendar
+                    //拿到日期與時間
+                    onNavigate={setCurrentDate}
+                    onView={setCurrentView}
                     //選取的特定day
-                    defaultView="day"
+                    defaultView="week"
                     localizer={localizer}
                     events={timeEvents}
+                    //拖拉判斷有沒有backgroundevent
                     draggableAccessor={(event) => !event.background}
                     startAccessor="start"
                     endAccessor="end"
                     backgroundEvents={backgroundEvents}
                     //設置可切換有哪些view
-                    // views={['day']}
+                    // views={['day', 'week']}
                     style={{ height: 500 }}
                     //自訂義月曆背景顏色
                     dayPropGetter={calendarStyle}
@@ -220,10 +266,10 @@ const About = () => {
                             };
                         }
                     }
-
                 >
                 </DragAndDropCalendar>
                 <Pop />
+                <div>Displayed Date Rage: {displayedDateRage.start} - {displayedDateRage.end}</div>
                 <MyTimePicker />
 
             </div>

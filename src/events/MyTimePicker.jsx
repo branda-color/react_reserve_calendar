@@ -104,7 +104,6 @@ const MyTimePicker = () => {
         dispatch({ type: "delete", payload: { timeEvents: delEvent } });
         setSelect(null);
 
-
       }}>{selectedId !== -1 ? button.button.delete : button.button.clear}</Button>
 
     </div>

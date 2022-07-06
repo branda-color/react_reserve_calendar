@@ -1,6 +1,9 @@
 
 import moment from "moment";
 
+/**
+ * 新增修改event無法有相同或重疊時間
+ */
 export function noOverlap(start, end, timeEvents) {
 
     let bool = false;
