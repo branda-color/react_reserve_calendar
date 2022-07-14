@@ -58,7 +58,6 @@ const About = () => {
 
         }
 
-
     };
 
     //選擇日曆物件
@@ -173,7 +172,6 @@ const About = () => {
 
     let computeDisplayedDateRange = () => {
         let start = moment(date).startOf(view);
-        console.log(start);
         let end = moment(date).endOf(view);
         if (view == 'month') {
             start = start.startOf('week');
@@ -268,10 +266,13 @@ const About = () => {
                     }
                 >
                 </DragAndDropCalendar>
-                <Pop />
                 <div>Displayed Date Rage: {displayedDateRage.start} - {displayedDateRage.end}</div>
+                { selectedId !== 0 &&
+                <Pop >
                 <MyTimePicker />
-
+                </Pop>
+                
+                }
             </div>
         </div>
 

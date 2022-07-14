@@ -7,13 +7,13 @@ export const initialEvent = {
     selectedId: 0,
     timeEvents: [
         {
-            id: 1,
+            id:1,
             title: 'Today',
             start: new Date(date.subtract(3, 'hours').format('YYYY-MM-DD HH:00:00')),
             end: new Date(date.add(3, 'hours').format('YYYY-MM-DD HH:00:00')),
         },
         {
-            id: 2,
+            id:2,
             title: 'Point in Time Event',
             start:new Date(date.add(2, 'hours').format('YYYY-MM-DD HH:00:00')),
             end:new Date(date.add(3, 'hours').format('YYYY-MM-DD HH:00:00')),
@@ -43,9 +43,10 @@ export function reducer(state, action) {
                 ,selectedId:-1
             };
         case "change":
-
+            console.log(action.payload);
             return {
                 ...state,
+                selectedId:0,
                 timeEvents:action.payload.timeEvents
             }
 

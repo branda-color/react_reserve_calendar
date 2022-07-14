@@ -4,6 +4,7 @@ import moment from 'moment';
 import 'moment-timezone';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import TimezoneSelect from "../components/TimezoneSelect";
+import useTest from "../hooks/EventTake";
 
 import { EventContext } from "../contexts/event";
 
@@ -17,6 +18,30 @@ function getDate(str, momentObj) {
 
 
 const HomePage = ()=>{
+
+    fetch(
+        `http://127.0.0.1:8000/api/test`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+          },
+        body: JSON.stringify({
+          title: 123,
+          start:2222,
+          end:3333,
+          id: 1
+        }),
+
+      }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+         console.log(data);
+
+        })
+        .catch((err) => {
+          console.log(err, '錯誤');
+        })
 
     const [timezone, setTimezone] = useState(defaultTZ)
     
@@ -85,6 +110,7 @@ const HomePage = ()=>{
                     scrollToTime={timeEvents[0].start}
                 />
             </div>
+            <div></div>
         </div>
 
     );

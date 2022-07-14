@@ -28,24 +28,32 @@ const MyTimePicker = () => {
     if (selectedId && timeEvents) {
       let selectedEvent = timeEvents.filter(selected => selected.id === selectedId)[0];
       setSelect(selectedEvent);
-      setstartTime(moment(selectedEvent.start));
-      setendTime(moment(selectedEvent.end));
-      setTitle(selectedEvent.title);
+   
     }
   }, [selectedId, timeEvents]);
 
   // 因為useEfeect會被呼喚把select的event值全部回填回去,要設為null必須要在改變select的值
   useEffect(() => {
     if (!select) {
-      setstartTime(null);
-      setendTime(null);
-      setTitle(null);
+      console.log(456, select);
+      // setstartTime(null);
+      // setendTime(null);
+      // setTitle(null);
+    } else {
+      
+    console.log(select.start, select.end, select.title);
+
+    setstartTime(moment(select.start));
+    setendTime(moment(select.end));
+    setTitle(select.title);
+
     }
+
   }, [select]);
 
 
   return (
-    <div>
+    <div className="popup-content">
       <TimePicker
         value={startTime ? startTime : (select ? moment(select.start) : null)}
         minuteStep={30}
@@ -80,18 +88,44 @@ const MyTimePicker = () => {
 
         let newEvent = timeEvents.filter(selected => selected.id !== selectedId);
 
-        newEvent.push({
-          id: selectedId,
-          title: title,
-          start: new Date(startTime),
-          end: new Date(endTime),
-        });
+        console.log(newEvent, timeEvents, selectedId);
 
         let overlap = noOverlap(new Date(startTime), new Date(endTime), newEvent);
 
+
         if (overlap !== true) {
 
-          dispatch({ type: "change", payload: { timeEvents: newEvent } });
+          fetch(
+            `http://127.0.0.1:8000/api/test`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              title: title,
+              start: new Date(startTime),
+              end: new Date(endTime),
+              id: selectedId
+            }),
+
+          }
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              newEvent.push({
+                  id: data.id,
+                  title: title,
+                  start:  new Date(startTime),
+                  end: new Date( endTime),
+                });
+                
+                console.log(newEvent);
+              dispatch({ type: "change", payload: { timeEvents: newEvent } });
+            })
+            .catch((err) => {
+              console.log(err, '錯誤');
+            })
+
 
         }
 
