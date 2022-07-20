@@ -4,7 +4,6 @@ import moment from 'moment';
 import 'moment-timezone';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import TimezoneSelect from "../components/TimezoneSelect";
-import useTest from "../hooks/EventTake";
 
 import { EventContext } from "../contexts/event";
 

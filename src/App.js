@@ -10,21 +10,25 @@ import About from "./pages/About";
 import AdjustTime from "./pages/AdjustTime";
 import Test from "./pages/Test";
 
-import {EventContextProvider} from "./contexts/event";
+//timeline全域物件
+import { EventContextProvider } from "./contexts/event";
+//預約時間全域物件
+import { TimeOpenContextProvider } from "./contexts/setOpenTime";
 
 
 
 function App() {
   return (
     <BrowserRouter>
-    <EventContextProvider>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="about/*" element={<About />} />
-        <Route path="adjusttime" element={<AdjustTime/>} />
-        <Route path="test" element={<Test/>} />
- 
-      </Routes>
+      <EventContextProvider>
+        <TimeOpenContextProvider>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="about/*" element={<About />} />
+            <Route path="adjusttime" element={<AdjustTime />} />
+            <Route path="test" element={<Test />} />
+          </Routes>
+        </TimeOpenContextProvider>
       </EventContextProvider>
     </BrowserRouter>
   );
