@@ -1,46 +1,63 @@
-import * as React from 'react';
-import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import React, { useCallback, useContext, useState } from 'react';
 
-import { TimePicker } from 'antd';
+import { Button } from 'antd';
+
 import 'antd/dist/antd.css';
+import '../index.css';
 
 
-export default function BasicPopover() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  //popover
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+const TabContent0 = () => <div className="content">Content0</div>;
+const TabContent1 = () => <div className="content">Content1</div>;
+const TabContent2 = () => <div className="content">Content2</div>;
+
+const BUTTONS = ["Content0", "Content1", "Content2"];
+
+
+
+
+const Test = () => {
+
+
+  const [click, setclick] = useState(null);
+
+  const handleClick = (event, key) => {
+    console.log('key index: ', key);
+
+    if (key == 0) {
+      setclick(TabContent0);
+    } else if (key == 1) {
+      setclick(TabContent1);
+    } else {
+      setclick(TabContent2);
+    }
+
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
 
 
   return (
     <div>
-      <Button aria-describedby={id} variant="contained" onClick={handleClick}>
-        Open Popover
-      </Button>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
-      </Popover>
-      <TimePicker  format="HH:mm"  minuteStep={30} />
+
+      <div>
+        {BUTTONS.map((element, key) => (
+          <Button type="primary" shape="round" size="large" onClick={event => handleClick(event, key)} key={key}>{element}</Button>
+        ))}
+      </div>
+
+      <div>
+        {click}
+      </div>
     </div>
   );
+
+
+
+
 }
+
+
+
+
+
+export default Test;
